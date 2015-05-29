@@ -1,3 +1,6 @@
+**[deprecated]** Do not use this package anymore, for an actively maintained source for the node.js modbus client got to [https://github.com/Cloud-Automation/modbus](https://github.com/Cloud-Automation/modbus)
+and the modbus client for chrome apps visit [[https://github.com/Cloud-Automation/chrome-modbus](https://github.com/Cloud-Automation/chrome-modbus).
+
 A simple an easy to use Modbus TCP client/server implementation.
 
 jsModbus
