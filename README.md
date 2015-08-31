@@ -1,12 +1,12 @@
 **[deprecated]** Do not use this package anymore, for an actively maintained source for the node.js modbus client got to [https://github.com/Cloud-Automation/modbus](https://github.com/Cloud-Automation/modbus)
 and the modbus client for chrome apps visit [[https://github.com/Cloud-Automation/chrome-modbus](https://github.com/Cloud-Automation/chrome-modbus).
 
-A simple an easy to use Modbus TCP client/server implementation.
+A simple an easy to use Modbus TCP client implementation.
 
-jsModbus
-========
+ModbusTCPMaster
+===============
 
-jsModbus is a simple Modbus TCP Client (Server implementation is coming, but feel free to start on your own) with a 
+ModbusTCPMaster is a simple Modbus TCP Client with a 
 selfexplaining API.
 
 Installation
@@ -14,19 +14,11 @@ Installation
 
 Since this module is part of npm simply type `npm install jsmodbus` and you are ready to go.
 
-Testing
--------
-
-The test files are implemented using [mocha](https://github.com/visionmedia/mocha) and sinon.
-
-Simply `npm install -g mocha` and `npm install -g sinon`. To run the tests type from the projects root folder `mocha test/*`.
-
-Please feel free to fork and add your own tests.
 
 Client example
 --------------
 
-	var jsModbus = require('./jsModbus');
+	var jsModbus = require('./ModbusTCPMaster');
 	
 	// create a modbus client
 	var client = jsModbus.createTCPClient(502, '127.0.0.1', function (err) {
@@ -53,48 +45,6 @@ Client example
 	  // resp will look like { fc: 6, byteCount: 4, registerAddress: 13, registerValue: 42 }
 	});
 
-Server example
---------------
-
-	var jsModbus = require('./jsModbus');
-
-	// create readInputRegister handler
-	var rirHandler = function (start, quantity) {
-	  var resp[];
-	  for (var i = start; i < start + quant; i += 1) {
-	    resp.push(i);
-	  }
-
-	  return [resp];
-	};
-
-        var coil = false;
-        var writeCoilHandler = function (addr, value) {
-	  
- 	  if (addr === 0) {
-	    coil = value;
-	  }
-
-	  return [addr, value];
-
-	};
-
-
-	// create Modbus TCP Server
-	jsModbus.createTCPServer(8888, '127.0.0.1', function (err, modbusServer) {
-	  // addHandler
-	  server.addHandler(4, rirHandler);
-	  server.addHandler(5, writeCoilHandler);
-	});
-
-Development
------------
-
-To add other function codes on the client side see the test/serialClient.test.js and add a new test. To implement the test create an api call in src/serialClient.js and implement the pdu handler for the client in src/handler.js. That is mainly all.
-
-On the server side all you need to do is to implement the handler for the request and the response in the `exports.Server.RequestHandler` and `exports.Server.ResponseHandler`. Don't forget to test!
-
-That's it for now. Feel free to fork and implement more.
 
 License
 -------

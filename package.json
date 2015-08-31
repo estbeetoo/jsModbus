@@ -1,24 +1,27 @@
 {
-  "name": "jsmodbus",
-  "version": "0.2.0",
-  "description": "Implementation for the Serial/TCP Modbus protocol.",
+  "name": "ModbusTCPMaster",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Implementation for the TCP Modbus protocol.",
   "author": "Stefan Poeter <stefan.poeter@gmail.com>",
-  "main": "./src/jsModbus.js",
+  "main": "./src/ModbusTCPMaster.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/StevePo/jsModbus"
+    "url": "https://github.com/estbeetoo/jsModbus.git"
   },
   "maintainers": [
-    "Stefan Poeter <Stefan.Poeter@gmail.com>"
+	  {
+	  	"name": "Stefan Poeter",
+	  	"email": "Stefan.Poeter@gmail.com"
+	  },
+	  {
+	  	"name": "Yury Kornilov",
+	  	"email": "kornilovyv81@gmail.com"
+	  }
   ],
   "dependencies": {
-    "put": "0.0.6"
-  },
-  "devDependencies": {
-    "sinon": "1.5.0"
-  },
-  "scripts": {
-    "test": "mocha test/*"
+    "bufferput": "0.1.1",
+    "tcpclient": "0.0.2"
   },
   "engine": {
     "node": ">=0.6"
@@ -26,16 +29,9 @@
   "license": "MIT",
   "keywords": [
     "client",
-    "server",
-    "serial",
     "port",
     "modbus",
     "tcp"
   ],
-  "readmeFilename": "README.md",
-  "directories": {
-    "test": "test",
-    "example": "examples"
-  },
-  "license": "BSD"
+  "readmeFilename": "README.md"
 }
