@@ -1,7 +1,7 @@
-var Put              = require('bufferput');
 var Util             = require('util');
-var Handler          = require('handler');
+var Put              = require('bufferput');
 var TCPClient        = require('tcpClient');
+var Handler          = require('./handler');
 var ModbusMaster     = require('./ModbusMaster');
 
 var PROTOCOL_VERSION = 0;
@@ -23,6 +23,7 @@ var ModbusTCPMaster = function(port, host, callback){
     this._tcpClient.on('data', this._handleData(this));
     this._tcpClient.on('connect', this._handleConnection(this));
 
+    this._tcpClient.connect();
     this.state = 'ready'; // ready or waiting (for response)
 };
 
@@ -54,7 +55,7 @@ ModbusTCPMaster.prototype._flushPipe = function () {
 
         this._current = this._pipe.shift();
 
-        var pkt = Put()
+        var pkt = new Put()
             .word16be(this._reqId++)                 // transaction id
             .word16be(PROTOCOL_VERSION)             // protocol version
             .word16be(this._current.pdu.length + 1) // pdu length
@@ -176,7 +177,7 @@ ModbusTCPMaster.prototype._handleErrorPDU = function (pdu, cb) {
 };
 
 ModbusTCPMaster.prototype.reconnect = function(){
-    this._tcpClient.reconnect();
+    this._tcpClient.connect();
 };
 
 

@@ -1,4 +1,4 @@
-var modbus = require('./ModbusTCPMaster');
+var modbus = require('./src/ModbusTCPMaster');
 
 // create a modbus client
 var client = modbus.create(502, '127.0.0.1', function (err) {

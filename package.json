@@ -20,8 +20,8 @@
 	  }
   ],
   "dependencies": {
-    "bufferput": "0.1.1",
-    "tcpclient": "0.0.2"
+    "bufferput": "0.1.2",
+    "tcpclient": "0.0.3"
   },
   "engine": {
     "node": ">=0.6"

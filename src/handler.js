@@ -1,5 +1,5 @@
 
-var Put = require('put');
+var Put = require('bufferput');
 var util = require('util');
 
 var log = function (msg) {  }
@@ -40,7 +40,7 @@ exports.Server.ResponseHandler = {
   1:  function (register) {
         var flr = Math.floor(register.length / 8),
 	    len = register.length % 8 > 0 ? flr + 1 : flr,
-	    res = Put().word8(1).word8(len);
+	    res =new Put().word8(1).word8(len);
 
         var cntr = 0;
         for (var i = 0; i < len; i += 1 ) {
@@ -62,7 +62,7 @@ exports.Server.ResponseHandler = {
   // read input register
   4:  function (register) {
 
-        var res = Put().word8(4).word8(register.length * 2);
+        var res =new Put().word8(4).word8(register.length * 2);
 
 	for (var i = 0; i < register.length; i += 1) {
 	  res.word16be(register[i]);
@@ -72,14 +72,14 @@ exports.Server.ResponseHandler = {
   },
   5:  function (outputAddress, outputValue) {
 
-        var res = Put().word8(5).word16be(outputAddress)
+        var res =new Put().word8(5).word16be(outputAddress)
 		.word16be(outputValue?0xFF00:0x0000).buffer();
 
         return res;
   },
   6: function (outputAddress, outputValue) {
   
-      var res = Put().word8(5).word16be(outputAddress).word16be(outputValue).buffer();
+      var res =new Put().word8(5).word16be(outputAddress).word16be(outputValue).buffer();
 
       return res;
   

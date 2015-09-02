@@ -77,7 +77,7 @@ ModbusMaster.prototype._makeRequest = function (fc, pdu, cb) {
  *  this an extra function.
  */
 ModbusMaster.prototype._pduWithTwoParameter = function (fc, start, quantity) {
-    return Put()
+    return new Put()
         .word8(fc)
         .word16be(start)
         .word16be(quantity)
