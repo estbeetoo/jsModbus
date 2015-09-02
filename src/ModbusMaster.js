@@ -2,7 +2,7 @@ var Put              = require('bufferput');
 
 var dummy            = function () { };
 
-var ModbusMaster = function(){
+function ModbusMaster(){
     if (!(this instanceof ModbusMaster)) {
         return new ModbusMaster();
     }

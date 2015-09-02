@@ -1,18 +1,19 @@
 var Util             = require('util');
 var Put              = require('bufferput');
 var TCPClient        = require('tcpClient');
-var Handler          = require('./handler');
-var ModbusMaster     = require('./ModbusMaster');
+var Handler          = require('./responsehandler');
+var ModbusMaster     = require('./modbusmaster');
 
 var PROTOCOL_VERSION = 0;
 var UNIT_ID          = 1;
 
-var ModbusTCPMaster = function(port, host, callback){
+function ModbusTCPMaster (port, host, callback){
     if (!(this instanceof ModbusTCPMaster)) {
         return new ModbusTCPMaster(port, host, callback);
     }
 
-    ModbusMaster.call(this);
+    ModbusTCPMaster.super_.call(this);
+    //ModbusMaster.call(this);
 
     // package and callback queues
     this._current = null;
