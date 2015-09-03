@@ -172,6 +172,7 @@ exports.Client.ResponseHandler = {
 
         cb(resp);
 
+        return resp;
 	},
 
     // ReadDiscreteInputs
@@ -200,6 +201,8 @@ exports.Client.ResponseHandler = {
         }
 
         cb(resp);
+
+        return resp;
     },
 
     // ReadHoldingRegisters
@@ -223,6 +226,8 @@ exports.Client.ResponseHandler = {
         }
 
         cb(resp);
+
+        return resp;
     },
 
     // ReadInputRegisters
@@ -246,6 +251,8 @@ exports.Client.ResponseHandler = {
         }
 
         cb(resp);
+
+        return resp;
     },
 
     // WriteSingleCoil
@@ -264,6 +271,8 @@ exports.Client.ResponseHandler = {
         };
 
         cb(resp);
+
+        return resp;
     },
 
     // WriteSingleRegister
@@ -282,6 +291,8 @@ exports.Client.ResponseHandler = {
 	    };
 
  	    cb(resp);
+
+        return resp;
     }
         
 };

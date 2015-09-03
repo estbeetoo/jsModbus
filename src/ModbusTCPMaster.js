@@ -36,9 +36,9 @@ Util.inherits(ModbusTCPMaster, ModbusMaster);
  * and pipes both. Calls flush in the end.
  */
 ModbusTCPMaster.prototype._makeReadingRequest = function (fc, pdu, cb) {
-    cb = function(resp, err){
-        console.log(resp);
-    };
+    //cb = function(resp, err){
+    //    console.log(resp);
+    //};
 
     ModbusMaster.prototype._makeReadingRequest.apply(this, arguments);
 
@@ -151,7 +151,8 @@ ModbusTCPMaster.prototype._handleData = function (that) {
             if (!handler) {
                 throw "No handler implemented.";
             }
-            handler(pdu, that._current.cb);
+
+            that._emitEvents(handler(pdu, that._current.cb));
 
             that._current = null;
             that.state = "ready";
@@ -251,6 +252,48 @@ ModbusTCPMaster.prototype._poll = function(that){
         }
 
     }
+};
+
+ModbusTCPMaster.prototype._emitEvents = function(resp){
+    console.log(resp);
+
+    var emitName = "Data";
+    var startAdr = this._current.pdu.readUInt16BE(1);
+
+    var callEmitsForReadReq = function(emitName, arrName){
+        resp[arrName].forEach(function(item, i, arr){
+            var adr = startAdr + i;
+            this.emit(emitName + "." + adr, Number(arr[i]));
+        }.bind(this));
+    };
+
+    switch (Number(resp.fc)){
+        case 1:
+            emitName = emitName + ".Coil";
+            callEmitsForReadReq.call(this, emitName, "coils");
+            break;
+        case 2:
+            emitName = emitName + ".Input";
+            callEmitsForReadReq.call(this, emitName, "dInputs");
+            break;
+        case 3:
+            emitName = emitName + ".HoldingRegister";
+            callEmitsForReadReq.call(this, emitName, "registers");
+            break;
+        case 4:
+            emitName = emitName + ".InputRegister";
+            callEmitsForReadReq.call(this, emitName, "registers");
+            break;
+        case 5:
+            emitName = emitName + ".Coil";
+            this.emit(emitName + "." + resp.outputAddress, Number(resp.outputValue));
+            break;
+        case 6:
+            emitName = emitName + ".HoldingRegister";
+            this.emit(emitName + "." + resp.registerAddress, Number(resp.registerValue));
+            break;
+    }
+
 };
 
 
