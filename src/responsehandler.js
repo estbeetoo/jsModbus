@@ -25,7 +25,7 @@ exports.ExceptionMessage = {
 exports.FC = {
   readCoils		: 1,
   readInputRegister	: 4
-}
+};
 
 exports.Server = { };
 
@@ -148,80 +148,137 @@ exports.Client.ResponseHandler = {
     // ReadCoils
     1:	function (pdu, cb) {
 
-	  log("handeling read coils response.");	  
+        log("handeling read coils response.");
 
-	  var fc = pdu.readUInt8(0),
+        var fc = pdu.readUInt8(0),
 	      byteCount = pdu.readUInt8(1),
 	      bitCount = byteCount * 8;
 
-	  var resp = {
-	    fc: fc,
-	    byteCount: byteCount,
-	    coils: [] 
-	  };
+        var resp = {
+            fc: fc,
+            byteCount: byteCount,
+            coils: []
+        };
 
-          var cntr = 0;
-          for (var i = 0; i < byteCount; i+=1) {
+        var cntr = 0;
+        for (var i = 0; i < byteCount; i+=1) {
             var h = 1, cur = pdu.readUInt8(2 + i);
-	    for (var j = 0; j < 8; j+=1) {
-	      resp.coils[cntr] = (cur & h) > 0 ;
-	      h = h << 1;
-              cntr += 1;
-	    }	    
+            for (var j = 0; j < 8; j+=1) {
+                resp.coils[cntr] = (cur & h) > 0 ;
+                h = h << 1;
+                cntr += 1;
+            }
+        }
 
-  	  }
-
-	  cb(resp);
+        cb(resp);
 
 	},
 
-    // ReadInputRegister
-    4:  function (pdu, cb) {
-          log("handling read input register response.");
+    // ReadDiscreteInputs
+    2:	function (pdu, cb) {
 
-	  var fc = pdu.readUInt8(0),
-   	      byteCount = pdu.readUInt8(1);
+        log("handeling read discrete inputs response.");
 
-          var resp = {
+        var fc = pdu.readUInt8(0),
+            byteCount = pdu.readUInt8(1),
+            bitCount = byteCount * 8;
+
+        var resp = {
             fc: fc,
             byteCount: byteCount,
-            register: []
-          };
+            dInputs: []
+        };
 
-          var registerCount = byteCount / 2;
+        var cntr = 0;
+        for (var i = 0; i < byteCount; i+=1) {
+            var h = 1, cur = pdu.readUInt8(2 + i);
+            for (var j = 0; j < 8; j+=1) {
+                resp.dInputs[cntr] = (cur & h) > 0 ;
+                h = h << 1;
+                cntr += 1;
+            }
+        }
 
-          for (var i = 0; i < registerCount; i += 1) {
-            resp.register.push(pdu.readUInt16BE(2 + (i * 2)));
-          }
-
-          cb(resp);
-        },
-    5:  function (pdu, cb) {
-          log("handling write single coil response.");
-
-	  var fc = pdu.readUInt8(0),
-	      outputAddress = pdu.readUInt16BE(1),
-	      outputValue = pdu.readUInt16BE(3);
-
-	  var resp = {
-	    fc: fc,
-	    outputAddress: outputAddress,
-	    outputValue: outputValue === 0x0000?false:outputValue===0xFF00?true:undefined
- 	  };
-
-  	  cb(resp);
+        cb(resp);
     },
+
+    // ReadHoldingRegisters
+    3:  function (pdu, cb) {
+
+        log("handling read holding registers response.");
+
+        var fc = pdu.readUInt8(0),
+            byteCount = pdu.readUInt8(1);
+
+        var resp = {
+            fc: fc,
+            byteCount: byteCount,
+            registers: []
+        };
+
+        var registersCount = byteCount / 2;
+
+        for (var i = 0; i < registersCount; i += 1) {
+            resp.registers.push(pdu.readUInt16BE(2 + (i * 2)));
+        }
+
+        cb(resp);
+    },
+
+    // ReadInputRegisters
+    4:  function (pdu, cb) {
+
+        log("handling read input registers response.");
+
+        var fc = pdu.readUInt8(0),
+            byteCount = pdu.readUInt8(1);
+
+        var resp = {
+            fc: fc,
+            byteCount: byteCount,
+            registers: []
+        };
+
+        var registerCounts = byteCount / 2;
+
+        for (var i = 0; i < registerCounts; i += 1) {
+            resp.registers.push(pdu.readUInt16BE(2 + (i * 2)));
+        }
+
+        cb(resp);
+    },
+
+    // WriteSingleCoil
+    5:  function (pdu, cb) {
+
+        log("handling write single coil response.");
+
+        var fc = pdu.readUInt8(0),
+            outputAddress = pdu.readUInt16BE(1),
+            outputValue = pdu.readUInt16BE(3);
+
+        var resp = {
+            fc: fc,
+            outputAddress: outputAddress,
+            outputValue: outputValue === 0x0000?false:outputValue===0xFF00?true:undefined
+        };
+
+        cb(resp);
+    },
+
+    // WriteSingleRegister
     6:    function (pdu, cb) {
-            log("handling write single register response.");
 
-            var fc = pdu.readUInt8(0),
-		registerAddress = pdu.readUInt16BE(1),
-		registerValue = pdu.readUInt16BE(3);
+        log("handling write single register response.");
 
- 	    var resp = {
-	      fc: fc,
-	      registerAddress: registerAddress,
-              registerValue: registerValue
+        var fc = pdu.readUInt8(0),
+            registerAddress = pdu.readUInt16BE(1),
+            registerValue = pdu.readUInt16BE(3);
+
+        var resp = {
+            fc: fc,
+            registerAddress: registerAddress,
+            registerValue: registerValue
 	    };
 
  	    cb(resp);

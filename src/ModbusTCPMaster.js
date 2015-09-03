@@ -13,7 +13,6 @@ function ModbusTCPMaster (port, host, callback){
     }
 
     ModbusTCPMaster.super_.call(this);
-    //ModbusMaster.call(this);
 
     // package and callback queues
     this._current = null;
@@ -26,7 +25,9 @@ function ModbusTCPMaster (port, host, callback){
 
     this._tcpClient.connect();
     this.state = 'ready'; // ready or waiting (for response)
-};
+
+    setInterval(this._poll(this), this.pollTimeOut);
+}
 
 Util.inherits(ModbusTCPMaster, ModbusMaster);
 
@@ -34,28 +35,45 @@ Util.inherits(ModbusTCPMaster, ModbusMaster);
  * Pack up the pdu and the handler function
  * and pipes both. Calls flush in the end.
  */
-ModbusTCPMaster.prototype._makeRequest = function (fc, pdu, cb) {
+ModbusTCPMaster.prototype._makeReadingRequest = function (fc, pdu, cb) {
+    cb = function(resp, err){
+        console.log(resp);
+    };
 
-    ModbusMaster.prototype._makeRequest.apply(this, arguments);
+    ModbusMaster.prototype._makeReadingRequest.apply(this, arguments);
 
     if (this.state === 'ready') {
-        this._flushPipe();
+        this._flushPipes();
     }
 };
+
+ModbusTCPMaster.prototype._makeWritingRequest = function (fc, pdu, cb) {
+    ModbusMaster.prototype._makeWritingRequest.apply(this, arguments);
+
+    if (this.state === 'ready') {
+        this._flushPipes();
+    }
+};
+
 
 /**
  *  Iterates through the package pipe and
  *  sends the requests
  */
-ModbusTCPMaster.prototype._flushPipe = function () {
+ModbusTCPMaster.prototype._flushPipes = function () {
     if (!this._tcpClient.isConnected) {
         return;
     }
 
-    if (this._pipe.length > 0 && !this._current) {
-
-        this._current = this._pipe.shift();
-
+    if (!this._current){
+        if (this._writingPipe.length > 0){
+            this._current = this._writingPipe.shift();
+        } else if(this._readingPipe.length > 0) {
+            this._current = this._readingPipe.shift();
+        } else
+        {
+            return;
+        }
         var pkt = new Put()
             .word16be(this._reqId++)                 // transaction id
             .word16be(PROTOCOL_VERSION)             // protocol version
@@ -71,7 +89,7 @@ ModbusTCPMaster.prototype._flushPipe = function () {
 
 ModbusTCPMaster.prototype._handleConnection = function(that){
     return function() {
-        that._flushPipe();
+        that._flushPipes();
     }
 };
 
@@ -122,7 +140,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
             if (that._handleErrorPDU(pdu, that._current.cb)) {
                 that.state = "ready";
                 that._current = null;
-                that._flushPipe();
+                that._flushPipes();
                 return;
             }
 
@@ -137,7 +155,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
             that._current = null;
             that.state = "ready";
-            that._flushPipe();
+            that._flushPipes();
         }
 
     };
@@ -179,6 +197,60 @@ ModbusTCPMaster.prototype._handleErrorPDU = function (pdu, cb) {
 
 ModbusTCPMaster.prototype.reconnect = function(){
     this._tcpClient.connect();
+};
+
+ModbusTCPMaster.prototype._poll = function(that){
+    return function(){
+
+        var makeReq = function(type){
+            var arrName, funcName;
+
+            switch (type){
+                case 'coils':
+                    arrName = "_coils";
+                    funcName = "readCoils";
+                    break;
+                case 'dInputs':
+                    arrName = "_dInputs";
+                    funcName = "readDiscreteInputs";
+                    break;
+                case 'holdingRegisters':
+                    arrName = "_holdingRegisters";
+                    funcName = "readHoldingRegisters";
+                    break;
+                case 'inputRegisters':
+                    arrName = "_inputRegisters";
+                    funcName = "readInputRegisters";
+                    break;
+            }
+
+            var res = that[arrName].reduce(function(pack, item, i){
+                if (typeof pack === 'undefined'){
+                    return {"start": i, "quantity": 1};
+                } else if (i == pack["start"] + pack["quantity"]) {
+                    if (pack["quantity"] >= 120){
+                        that[funcName](pack["start"], tpack["quantity"]);
+                        return {"start": i, "quantity": 1};
+                    }
+                    return {"start": pack["start"], "quantity": pack["quantity"] + 1};
+                } else {
+                    that[funcName](pack["start"], pack["quantity"]);
+                    return {"start": i, "quantity": 1};
+                }
+            }, undefined);
+            if (res) {
+                that[funcName](res["start"], res["quantity"]);
+            }
+        };
+
+        if (that._readingPipe.length == 0){
+            makeReq('coils');
+            makeReq('dInputs');
+            makeReq('holdingRegisters');
+            makeReq('inputRegisters');
+        }
+
+    }
 };
 
 
