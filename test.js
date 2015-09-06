@@ -52,3 +52,5 @@ client.writeSingleRegister(2,6, function(resp, err) {
 
 client.addPollingCoils(1, 10);
 client.addPollingCoils(15, 2);
+
+client.connect();

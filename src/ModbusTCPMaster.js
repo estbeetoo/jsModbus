@@ -23,9 +23,6 @@ function ModbusTCPMaster (port, host, callback){
     this._tcpClient.on('data', this._handleData(this));
     this._tcpClient.on('connect', this._handleConnection(this));
 
-    this._tcpClient.connect();
-    this.state = 'ready'; // ready or waiting (for response)
-
     setInterval(this._poll(this), this.pollTimeOut);
 }
 
@@ -89,6 +86,7 @@ ModbusTCPMaster.prototype._flushPipes = function () {
 
 ModbusTCPMaster.prototype._handleConnection = function(that){
     return function() {
+        this.state = 'ready'; // ready or waiting (for response)
         that._flushPipes();
     }
 };
@@ -196,7 +194,7 @@ ModbusTCPMaster.prototype._handleErrorPDU = function (pdu, cb) {
     return true;
 };
 
-ModbusTCPMaster.prototype.reconnect = function(){
+ModbusTCPMaster.prototype.connect = function(){
     this._tcpClient.connect();
 };
 
