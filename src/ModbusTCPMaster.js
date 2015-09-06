@@ -18,6 +18,8 @@ function ModbusTCPMaster (port, host, callback){
     this._current = null;
     this._reqId = 0;
 
+    this.state = 'waiting';
+
     this._resHandler = Handler.Client.ResponseHandler;
     this._tcpClient = TCPClient.create(host, port, callback);
     this._tcpClient.on('data', this._handleData(this));
@@ -86,7 +88,7 @@ ModbusTCPMaster.prototype._flushPipes = function () {
 
 ModbusTCPMaster.prototype._handleConnection = function(that){
     return function() {
-        this.state = 'ready'; // ready or waiting (for response)
+        that.state = 'ready'; // ready or waiting (for response)
         that._flushPipes();
     }
 };
