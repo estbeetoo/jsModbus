@@ -15,7 +15,7 @@ function ModbusMaster(){
     this._dInputs = [];
     this._holdingRegisters = [];
     this._inputRegisters = [];
-    this.pollTimeOut = 1000;
+    this.pollTimeOut = 5000;
 
     // package and callback queues
     this._readingPipe = [];
@@ -81,6 +81,7 @@ ModbusMaster.prototype.addPollingCoils = function(start, quantity) {
     for (var i=start; i<start+(quantity || 1); i++){
         this._coils[i] = true;
     }
+    console.log("coils: "+this._coils);
 };
 
 ModbusMaster.prototype.addPollingInputs = function(start, quantity) {

@@ -25,7 +25,7 @@ function ModbusTCPMaster (port, host, callback){
     this._tcpClient.on('data', this._handleData(this));
     this._tcpClient.on('connect', this._handleConnection(this));
 
-    setInterval(this._poll(this), this.pollTimeOut);
+    this._timer = setInterval(this._poll(this), this.pollTimeOut);
 }
 
 Util.inherits(ModbusTCPMaster, ModbusMaster);
@@ -35,10 +35,6 @@ Util.inherits(ModbusTCPMaster, ModbusMaster);
  * and pipes both. Calls flush in the end.
  */
 ModbusTCPMaster.prototype._makeReadingRequest = function (fc, pdu, cb) {
-    //cb = function(resp, err){
-    //    console.log(resp);
-    //};
-
     ModbusMaster.prototype._makeReadingRequest.apply(this, arguments);
 
     if (this.state === 'ready') {
@@ -101,7 +97,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
     return function (data) {
 
-        console.log('received data');
+        //console.log('received data');
 
         var cnt = 0;
 
@@ -114,7 +110,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
             cnt += 7;
 
-            console.log('MBAP extracted');
+            //console.log('MBAP extracted');
 
             // 2. extract pdu
 
@@ -122,7 +118,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
             cnt += pdu.length;
 
-            console.log('PDU extracted: '+pdu);
+            //console.log('PDU extracted: '+pdu);
 
             // emit data event and let the
             // listener handle the pdu
@@ -136,7 +132,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
             // 1. check pdu for errors
 
-            console.log("Checking pdu for errors");
+            //console.log("Checking pdu for errors");
             if (that._handleErrorPDU(pdu, that._current.cb)) {
                 that.state = "ready";
                 that._current = null;
@@ -146,7 +142,7 @@ ModbusTCPMaster.prototype._handleData = function (that) {
 
             // 2. handle pdu
 
-            console.log("Calling Callback with pdu.");
+            //console.log("Calling Callback with pdu.");
             var handler = that._resHandler[that._current.fc];
             if (!handler) {
                 throw "No handler implemented.";
@@ -198,6 +194,15 @@ ModbusTCPMaster.prototype._handleErrorPDU = function (pdu, cb) {
 
 ModbusTCPMaster.prototype.connect = function(){
     this._tcpClient.connect();
+};
+
+ModbusTCPMaster.prototype.disconnect = function(){
+    this._tcpClient.end();
+    clearInterval(this._timer);
+    this._coils = [];
+    this._dInputs = [];
+    this._holdingRegisters = [];
+    this._inputRegisters = [];
 };
 
 ModbusTCPMaster.prototype._poll = function(that){
@@ -259,11 +264,14 @@ ModbusTCPMaster.prototype._emitEvents = function(resp){
 
     var emitName = "Data";
     var startAdr = this._current.pdu.readUInt16BE(1);
+    var quantity = this._current.pdu.readUInt16BE(3);
 
     var callEmitsForReadReq = function(emitName, arrName){
         resp[arrName].forEach(function(item, i, arr){
-            var adr = startAdr + i;
-            this.emit(emitName + "." + adr, Number(arr[i]));
+            if (i<quantity){
+                var adr = startAdr + i;
+                this.emit(emitName + "." + adr, Number(arr[i]));
+            }
         }.bind(this));
     };
 

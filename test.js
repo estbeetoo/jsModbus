@@ -50,7 +50,19 @@ client.writeSingleRegister(2,6, function(resp, err) {
     console.log(resp);
 });
 
-client.addPollingCoils(1, 10);
-client.addPollingCoils(15, 2);
+//client.addPollingCoils(1, 10);
+//client.addPollingCoils(15, 2);
+
+//client.addPollingCoils(1);
+client.addPollingCoils(2);
+client.addPollingCoils(3);
+client.addPollingCoils(0);
+
+client.on('Data.Coil.0', function(val){
+    console.log("Value of Coil0: "+val);
+});
+client.on('Data.Coil.3', function(val){
+    console.log("Value of Coil3: "+val);
+});
 
 client.connect();

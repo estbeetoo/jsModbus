@@ -1,6 +1,6 @@
 {
-  "name": "ModbusTCPMaster",
-  "version": "0.0.1",
+  "name": "jsmodbus",
+  "version": "0.0.2",
   "private": false,
   "description": "Implementation for the TCP Modbus protocol.",
   "author": "Stefan Poeter <stefan.poeter@gmail.com>",

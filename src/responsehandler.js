@@ -148,7 +148,7 @@ exports.Client.ResponseHandler = {
     // ReadCoils
     1:	function (pdu, cb) {
 
-        log("handeling read coils response.");
+        //log("handeling read coils response.");
 
         var fc = pdu.readUInt8(0),
 	      byteCount = pdu.readUInt8(1),
@@ -178,7 +178,7 @@ exports.Client.ResponseHandler = {
     // ReadDiscreteInputs
     2:	function (pdu, cb) {
 
-        log("handeling read discrete inputs response.");
+        //log("handeling read discrete inputs response.");
 
         var fc = pdu.readUInt8(0),
             byteCount = pdu.readUInt8(1),
@@ -208,7 +208,7 @@ exports.Client.ResponseHandler = {
     // ReadHoldingRegisters
     3:  function (pdu, cb) {
 
-        log("handling read holding registers response.");
+        //log("handling read holding registers response.");
 
         var fc = pdu.readUInt8(0),
             byteCount = pdu.readUInt8(1);
@@ -233,7 +233,7 @@ exports.Client.ResponseHandler = {
     // ReadInputRegisters
     4:  function (pdu, cb) {
 
-        log("handling read input registers response.");
+        //log("handling read input registers response.");
 
         var fc = pdu.readUInt8(0),
             byteCount = pdu.readUInt8(1);
@@ -258,7 +258,7 @@ exports.Client.ResponseHandler = {
     // WriteSingleCoil
     5:  function (pdu, cb) {
 
-        log("handling write single coil response.");
+        //log("handling write single coil response.");
 
         var fc = pdu.readUInt8(0),
             outputAddress = pdu.readUInt16BE(1),
@@ -278,7 +278,7 @@ exports.Client.ResponseHandler = {
     // WriteSingleRegister
     6:    function (pdu, cb) {
 
-        log("handling write single register response.");
+        //log("handling write single register response.");
 
         var fc = pdu.readUInt8(0),
             registerAddress = pdu.readUInt16BE(1),
