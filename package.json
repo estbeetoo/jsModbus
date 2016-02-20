@@ -1,5 +1,5 @@
 {
-  "name": "jsmodbus",
+  "name": "modbus.js",
   "version": "0.0.3",
   "private": false,
   "description": "Implementation for the TCP Modbus protocol.",
