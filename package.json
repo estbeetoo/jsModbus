@@ -1,13 +1,13 @@
 {
   "name": "jsmodbus",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": false,
   "description": "Implementation for the TCP Modbus protocol.",
   "author": "Stefan Poeter <stefan.poeter@gmail.com>",
-  "main": "./src/ModbusTCPMaster.js",
+  "main": "./src/modbustcpmaster.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/estbeetoo/jsModbus.git"
+    "url": "https://github.com/estbeetoo/modbus.js.git"
   },
   "maintainers": [
 	  {
@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "bufferput": "0.1.2",
-    "tcpclient": "0.0.3"
+    "tcpclient": "0.0.6"
   },
   "engine": {
     "node": ">=0.6"
