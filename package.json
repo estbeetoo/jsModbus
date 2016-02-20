@@ -1,6 +1,6 @@
 {
   "name": "modbus.js",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "description": "Implementation for the TCP Modbus protocol.",
   "author": "Stefan Poeter <stefan.poeter@gmail.com>",
