@@ -1,6 +1,6 @@
 var Util             = require('util');
 var Put              = require('bufferput');
-var TCPClient        = require('tcpClient');
+var TCPClient        = require('tcpclient');
 var Handler          = require('./responsehandler');
 var ModbusMaster     = require('./modbusmaster');
 
